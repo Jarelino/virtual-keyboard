@@ -123,8 +123,13 @@ const sp = {
     numb: 0,
   },
   Enter: {
-    class: 'Enter;',
+    class: 'Enter',
     value: '\n',
+    numb: 0,
+  },
+  Space: {
+    class: 'Space',
+    value: ' ',
     numb: 0,
   },
 };
@@ -191,7 +196,7 @@ function langSymb(symb) {
 function clicks() {
   Array.from(document.getElementsByClassName('btn')).forEach((elem) => {
     elem.addEventListener('click', () => {
-      document.getElementById('input').value += isSpecial(elem.innerHTML) ? '' : elem.innerHTML;
+      document.getElementById('input').innerHTML += isSpecial(elem.innerHTML) ? '' : elem.innerHTML;
     });
 
     elem.addEventListener('mousedown', () => {
@@ -201,18 +206,18 @@ function clicks() {
       style.borderRadius = '10px';
 
       if (elem.innerHTML === 'Enter') {
-        document.getElementById('input').value += '\n';
+        document.getElementById('input').innerHTML += '\n';
       }
 
       if (elem.innerHTML === 'Tab') {
-        document.getElementById('input').value += '   ';
+        document.getElementById('input').innerHTML += '   ';
       }
 
       if (elem.innerHTML === 'Delete') {
-        document.getElementById('input').value = '';
+        document.getElementById('input').innerHTML = '';
       }
       if (elem.innerHTML === 'Backspace') {
-        document.getElementById('input').value = document.getElementById('input').value.slice(0, document.getElementById('input').value.length - 1);
+        document.getElementById('input').innerHTML = document.getElementById('input').innerHTML.slice(0, document.getElementById('input').value.length - 1);
       }
 
       if (elem.innerHTML === 'CapsLock') {
@@ -244,9 +249,10 @@ function clicks() {
   });
 
   document.addEventListener('keydown', (event) => {
-    if (document.activeElement.value !== document.getElementById('input').value) {
+    document.getElementById('input').focus();
+    event.preventDefault();
       Array.from(document.getElementsByClassName('btn')).forEach((elem) => {
-        if (elem.innerHTML === langSymb(event.key) || elem.innerHTML === event.code) {
+        if (elem.textContent === langSymb(event.key) || elem.textContent === event.code) {
           let btn = null;
           if (isSpecial(event.code)) {
             btn = document.getElementsByClassName(sp[event.code].class)[sp[event.code].numb];
@@ -258,34 +264,22 @@ function clicks() {
           btn.style.borderRadius = '10px';
         }
       });
-
       if (event.ctrlKey && event.altKey) {
         replaceKeyboard(localStorage.getItem('lang') === 'eu' ? buttonsRU : buttonsEU);
         localStorage.setItem('lang', localStorage.getItem('lang') === 'eu' ? 'ru' : 'eu');
       }
 
-      if (event.key === 'Enter') {
-        document.getElementById('input').value += '\n';
-      }
-
-      if (event.key === 'Tab') {
-        document.getElementById('input').value += '   ';
-      }
-
-      if (event.key === 'Delete') {
-        document.getElementById('input').value = '';
-      }
       if (event.key === 'Backspace') {
-        document.getElementById('input').value = document.getElementById('input').value.slice(0, document.getElementById('input').value.length - 1);
+        document.getElementById('input').textContent = document.getElementById('input').textContent.slice(0, document.getElementById('input').textContent.length - 1);
       }
 
       if (event.key === 'CapsLock') {
         Array.from(document.getElementsByClassName('btn')).forEach((button) => {
           const btn = button;
-          if (btn.innerHTML.length === 1 && btn.innerHTML.toUpperCase() === btn.innerHTML) {
-            btn.innerHTML = btn.innerHTML.toLowerCase();
-          } else if (btn.innerHTML.length === 1) {
-            btn.innerHTML = btn.innerHTML.toUpperCase();
+          if (btn.textContent.length === 1 && btn.textContent.toUpperCase() === btn.textContent) {
+            btn.textContent = btn.textContent.toLowerCase();
+          } else if (btn.textContent.length === 1) {
+            btn.textContent = btn.textContent.toUpperCase();
           }
         });
       }
@@ -293,14 +287,14 @@ function clicks() {
       if (event.key === 'Shift') {
         replaceKeyboard(localStorage.getItem('lang') === 'eu' ? shiftEU : shiftRU);
       }
-
+      console.log(document.getElementById('input').innerHTML);
+      console.log(isSpecial(event.code) ? sp[event.code].value : langSymb(event.key));
       document.getElementById('input').innerHTML += isSpecial(event.code) ? sp[event.code].value : langSymb(event.key);
-    }
   });
 
   document.addEventListener('keyup', (event) => {
     Array.from(document.getElementsByClassName('btn')).forEach((elem) => {
-      if (elem.innerHTML === langSymb(event.key) || elem.innerHTML === event.code) {
+      if (elem.textContent === langSymb(event.key) || elem.textContent === event.code) {
         const { style } = elem;
         style.background = '#fff';
         style.color = '#000';
