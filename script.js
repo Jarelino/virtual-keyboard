@@ -175,17 +175,47 @@ function replaceKeyboard(arr) {
   });
 }
 
+function isEng(symb) {
+  let result = false;
+  buttonsEU.forEach((row) => {
+    row.forEach((elem) => {
+      if (elem === symb) {
+        result = true;
+      }
+    })
+  })
+
+  return result;
+}
+
 function langSymb(symb) {
-  if (localStorage.getItem('lang') === 'eu') {
-    return symb;
-  } if (localStorage.getItem('lang') === 'ru') {
-    for (let i = 0; i < buttonsEU.length; i += 1) {
-      for (let j = 0; j < buttonsEU[i].length; j += 1) {
-        if (symb === buttonsEU[i][j]) {
-          return buttonsRU[i][j];
+  if (isEng(symb)) {
+    if (localStorage.getItem('lang') === 'eu') {
+      return symb;
+    } if (localStorage.getItem('lang') === 'ru') {
+      for (let i = 0; i < buttonsEU.length; i += 1) {
+        for (let j = 0; j < buttonsEU[i].length; j += 1) {
+          if (symb === buttonsEU[i][j]) {
+            return buttonsRU[i][j];
+          }
+          if (symb === shiftEU[i][j]) {
+            return shiftRU[i][j];
+          }
         }
-        if (symb === shiftEU[i][j]) {
-          return shiftRU[i][j];
+      }
+    }
+  } else {
+    if (localStorage.getItem('lang') === 'ru') {
+      return symb;
+    } if (localStorage.getItem('lang') === 'eu') {
+      for (let i = 0; i < buttonsRU.length; i += 1) {
+        for (let j = 0; j < buttonsRU[i].length; j += 1) {
+          if (symb === buttonsRU[i][j]) {
+            return buttonsEU[i][j];
+          }
+          if (symb === shiftRU[i][j]) {
+            return shiftEU[i][j];
+          }
         }
       }
     }
@@ -287,8 +317,7 @@ function clicks() {
       if (event.key === 'Shift') {
         replaceKeyboard(localStorage.getItem('lang') === 'eu' ? shiftEU : shiftRU);
       }
-      console.log(document.getElementById('input').innerHTML);
-      console.log(isSpecial(event.code) ? sp[event.code].value : langSymb(event.key));
+
       document.getElementById('input').innerHTML += isSpecial(event.code) ? sp[event.code].value : langSymb(event.key);
   });
 
