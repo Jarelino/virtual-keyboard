@@ -177,9 +177,9 @@ function replaceKeyboard(arr) {
 
 function isEng(symb) {
   let result = false;
-  buttonsEU.forEach((row) => {
-    row.forEach((elem) => {
-      if (elem === symb) {
+  buttonsEU.forEach((row, rowI) => {
+    row.forEach((elem, elemI) => {
+      if (elem === symb || symb === shiftEU[rowI][elemI]) {
         result = true;
       }
     })
@@ -317,7 +317,6 @@ function clicks() {
       if (event.key === 'Shift') {
         replaceKeyboard(localStorage.getItem('lang') === 'eu' ? shiftEU : shiftRU);
       }
-
       document.getElementById('input').innerHTML += isSpecial(event.code) ? sp[event.code].value : langSymb(event.key);
   });
 
@@ -348,4 +347,5 @@ window.onload = () => {
   render(input, document.getElementsByTagName('body')[0]);
   render(keyboardBlock(htmlLang === 'eu' ? buttonsEU : buttonsRU), document.getElementsByTagName('body')[0]);
   clicks();
+  console.log('load');
 };
