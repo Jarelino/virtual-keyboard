@@ -338,7 +338,7 @@ function clicks() {
 
 window.onload = () => {
   const htmlLang = localStorage.getItem('lang') === 'ru' ? 'ru' : 'eu';
-
+  localStorage.setItem('lang', htmlLang);
   const input = document.createElement('textarea');
   input.id = 'input';
   input.rows = '10';
