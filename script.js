@@ -191,30 +191,32 @@ function isEng(symb) {
 function langSymb(symb) {
   if (isEng(symb)) {
     if (localStorage.getItem('lang') === 'eu') {
-      return symb;
+      return localStorage.getItem('caps') === 'false' ? symb.toLowerCase() : symb.toUpperCase();
     } if (localStorage.getItem('lang') === 'ru') {
       for (let i = 0; i < buttonsEU.length; i += 1) {
         for (let j = 0; j < buttonsEU[i].length; j += 1) {
-          if (symb === buttonsEU[i][j]) {
-            return buttonsRU[i][j];
-          }
-          if (symb === shiftEU[i][j]) {
-            return shiftRU[i][j];
+          if (symb === buttonsEU[i][j] || symb === shiftEU[i][j]) {
+            if (localStorage.getItem('caps') === 'false') {
+              return buttonsRU[i][j];
+            } else {
+              return shiftRU[i][j];
+            }
           }
         }
       }
     }
   } else {
     if (localStorage.getItem('lang') === 'ru') {
-      return symb;
+      return localStorage.getItem('caps') === 'false' ? symb.toLowerCase() : symb.toUpperCase();
     } if (localStorage.getItem('lang') === 'eu') {
       for (let i = 0; i < buttonsRU.length; i += 1) {
         for (let j = 0; j < buttonsRU[i].length; j += 1) {
-          if (symb === buttonsRU[i][j]) {
-            return buttonsEU[i][j];
-          }
-          if (symb === shiftRU[i][j]) {
-            return shiftEU[i][j];
+          if (symb === buttonsRU[i][j] || symb === shiftRU[i][j]) {
+            if (localStorage.getItem('caps') === 'false') {
+              return buttonsEU[i][j];
+            } else {
+              return shiftEU[i][j];
+            }
           }
         }
       }
@@ -225,32 +227,33 @@ function langSymb(symb) {
 
 function clicks() {
   Array.from(document.getElementsByClassName('btn')).forEach((elem) => {
-    elem.addEventListener('click', () => {
-      document.getElementById('input').innerHTML += isSpecial(elem.innerHTML) ? '' : elem.innerHTML;
+    elem.addEventListener('click', (e) => {
+      document.getElementById('input').innerHTML += isSpecial(e.target.innerHTML) ? '' : elem.innerHTML;
     });
 
-    elem.addEventListener('mousedown', () => {
-      const { style } = elem;
+    elem.addEventListener('mousedown', (e) => {
+      const { style } = e.target;
       style.background = '#000';
       style.color = '#fff';
       style.borderRadius = '10px';
 
-      if (elem.innerHTML === 'Enter') {
+      if (e.target.innerHTML === 'Enter') {
         document.getElementById('input').innerHTML += '\n';
       }
 
-      if (elem.innerHTML === 'Tab') {
+      if (e.target.innerHTML === 'Tab') {
         document.getElementById('input').innerHTML += '   ';
       }
 
-      if (elem.innerHTML === 'Delete') {
+      if (e.target.innerHTML === 'Delete') {
         document.getElementById('input').innerHTML = '';
       }
-      if (elem.innerHTML === 'Backspace') {
+      if (e.target.innerHTML === 'Backspace') {
         document.getElementById('input').innerHTML = document.getElementById('input').innerHTML.slice(0, document.getElementById('input').value.length - 1);
       }
 
-      if (elem.innerHTML === 'CapsLock') {
+      if (e.target.innerHTML === 'CapsLock') {
+        localStorage.setItem('caps', localStorage.getItem('caps') === 'false');
         Array.from(document.getElementsByClassName('btn')).forEach((button) => {
           const btn = button;
           if (btn.innerHTML.length === 1 && btn.innerHTML.toUpperCase() === btn.innerHTML) {
@@ -261,19 +264,29 @@ function clicks() {
         });
       }
 
-      if (elem.innerHTML === 'Shift') {
-        replaceKeyboard(localStorage.getItem('lang') === 'eu' ? shiftEU : shiftRU);
+      if (e.target.innerHTML === 'Shift') {
+        if (localStorage.getItem('caps') === 'false') {
+          replaceKeyboard(localStorage.getItem('lang') === 'eu' ? shiftEU : shiftRU);
+        } else {
+          replaceKeyboard(localStorage.getItem('lang') === 'eu' ? buttonsEU : buttonsRU);
+        }
+        localStorage.setItem('caps', localStorage.getItem('caps') === 'false');
       }
     });
 
-    elem.addEventListener('mouseup', () => {
-      const { style } = elem;
+    elem.addEventListener('mouseup', (e) => {
+      const { style } = e.target;
       style.background = '#fff';
       style.color = '#000';
       style.borderRadius = '0px';
 
-      if (elem.innerHTML === 'Shift') {
-        replaceKeyboard(localStorage.getItem('lang') === 'eu' ? buttonsEU : buttonsRU);
+      if (e.target.innerHTML === 'Shift') {
+        if (localStorage.getItem('caps') === 'false') {
+          replaceKeyboard(localStorage.getItem('lang') === 'eu' ? shiftEU : shiftRU);
+        } else {
+          replaceKeyboard(localStorage.getItem('lang') === 'eu' ? buttonsEU : buttonsRU);
+        }
+        localStorage.setItem('caps', localStorage.getItem('caps') === 'false');
       }
     });
   });
@@ -295,6 +308,7 @@ function clicks() {
         }
       });
       if (event.ctrlKey && event.altKey) {
+        localStorage.setItem('caps', false);
         replaceKeyboard(localStorage.getItem('lang') === 'eu' ? buttonsRU : buttonsEU);
         localStorage.setItem('lang', localStorage.getItem('lang') === 'eu' ? 'ru' : 'eu');
       }
@@ -304,6 +318,7 @@ function clicks() {
       }
 
       if (event.key === 'CapsLock') {
+        localStorage.setItem('caps', localStorage.getItem('caps') === 'false');
         Array.from(document.getElementsByClassName('btn')).forEach((button) => {
           const btn = button;
           if (btn.textContent.length === 1 && btn.textContent.toUpperCase() === btn.textContent) {
@@ -315,7 +330,12 @@ function clicks() {
       }
 
       if (event.key === 'Shift') {
-        replaceKeyboard(localStorage.getItem('lang') === 'eu' ? shiftEU : shiftRU);
+        if (localStorage.getItem('caps') === 'false') {
+          replaceKeyboard(localStorage.getItem('lang') === 'eu' ? shiftEU : shiftRU);
+        } else {
+          replaceKeyboard(localStorage.getItem('lang') === 'eu' ? buttonsEU : buttonsRU);
+        }
+        localStorage.setItem('caps', localStorage.getItem('caps') === 'false');
       }
       document.getElementById('input').innerHTML += isSpecial(event.code) ? sp[event.code].value : langSymb(event.key);
   });
@@ -331,7 +351,12 @@ function clicks() {
     });
 
     if (event.key === 'Shift') {
-      replaceKeyboard(localStorage.getItem('lang') === 'eu' ? buttonsEU : buttonsRU);
+      if (localStorage.getItem('caps') === 'false') {
+        replaceKeyboard(localStorage.getItem('lang') === 'eu' ? shiftEU : shiftRU);
+      } else {
+        replaceKeyboard(localStorage.getItem('lang') === 'eu' ? buttonsEU : buttonsRU);
+      }
+      localStorage.setItem('caps', localStorage.getItem('caps') === 'false');
     }
   });
 }
@@ -339,13 +364,19 @@ function clicks() {
 window.onload = () => {
   const htmlLang = localStorage.getItem('lang') === 'ru' ? 'ru' : 'eu';
   localStorage.setItem('lang', htmlLang);
+
+  if (!localStorage.getItem('caps')) {
+    localStorage.setItem('caps', false);
+  }
+
+  const def = htmlLang === 'eu' ? (localStorage.getItem('caps') === 'false' ? buttonsEU : shiftEU) :  (localStorage.getItem('caps') === 'false' ? buttonsRU : shiftRU);
+
   const input = document.createElement('textarea');
   input.id = 'input';
   input.rows = '10';
   input.columns = '50';
 
   render(input, document.getElementsByTagName('body')[0]);
-  render(keyboardBlock(htmlLang === 'eu' ? buttonsEU : buttonsRU), document.getElementsByTagName('body')[0]);
+  render(keyboardBlock(def), document.getElementsByTagName('body')[0]);
   clicks();
-  console.log('load');
 };
