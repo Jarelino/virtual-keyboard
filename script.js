@@ -182,8 +182,8 @@ function isEng(symb) {
       if (elem === symb || symb === shiftEU[rowI][elemI]) {
         result = true;
       }
-    })
-  })
+    });
+  });
 
   return result;
 }
@@ -198,9 +198,8 @@ function langSymb(symb) {
           if (symb === buttonsEU[i][j] || symb === shiftEU[i][j]) {
             if (localStorage.getItem('caps') === 'false') {
               return buttonsRU[i][j];
-            } else {
-              return shiftRU[i][j];
             }
+            return shiftRU[i][j];
           }
         }
       }
@@ -214,9 +213,8 @@ function langSymb(symb) {
           if (symb === buttonsRU[i][j] || symb === shiftRU[i][j]) {
             if (localStorage.getItem('caps') === 'false') {
               return buttonsEU[i][j];
-            } else {
-              return shiftEU[i][j];
             }
+            return shiftEU[i][j];
           }
         }
       }
@@ -226,118 +224,116 @@ function langSymb(symb) {
 }
 
 function clicks() {
-  Array.from(document.getElementsByClassName('btn')).forEach((elem) => {
-    elem.addEventListener('click', (e) => {
-      document.getElementById('input').innerHTML += isSpecial(e.target.innerHTML) ? '' : elem.innerHTML;
-    });
+  document.getElementsByClassName('container')[0].addEventListener('click', (e) => {
+    document.getElementById('input').innerHTML += isSpecial(e.target.innerHTML) ? '' : e.target.innerHTML;
+  });
 
-    elem.addEventListener('mousedown', (e) => {
-      const { style } = e.target;
-      style.background = '#000';
-      style.color = '#fff';
-      style.borderRadius = '10px';
+  document.getElementsByClassName('container')[0].addEventListener('mousedown', (e) => {
+    const { style } = e.target;
+    style.background = '#000';
+    style.color = '#fff';
+    style.borderRadius = '10px';
 
-      if (e.target.innerHTML === 'Enter') {
-        document.getElementById('input').innerHTML += '\n';
-      }
+    if (e.target.innerHTML === 'Enter') {
+      document.getElementById('input').innerHTML += '\n';
+    }
 
-      if (e.target.innerHTML === 'Tab') {
-        document.getElementById('input').innerHTML += '   ';
-      }
+    if (e.target.innerHTML === 'Tab') {
+      document.getElementById('input').innerHTML += '   ';
+    }
 
-      if (e.target.innerHTML === 'Delete') {
-        document.getElementById('input').innerHTML = '';
-      }
-      if (e.target.innerHTML === 'Backspace') {
-        document.getElementById('input').innerHTML = document.getElementById('input').innerHTML.slice(0, document.getElementById('input').value.length - 1);
-      }
+    if (e.target.innerHTML === 'Delete') {
+      document.getElementById('input').innerHTML = '';
+    }
+    if (e.target.innerHTML === 'Backspace') {
+      document.getElementById('input').innerHTML = document.getElementById('input').innerHTML.slice(0, document.getElementById('input').value.length - 1);
+    }
 
-      if (e.target.innerHTML === 'CapsLock') {
-        localStorage.setItem('caps', localStorage.getItem('caps') === 'false');
-        Array.from(document.getElementsByClassName('btn')).forEach((button) => {
-          const btn = button;
-          if (btn.innerHTML.length === 1 && btn.innerHTML.toUpperCase() === btn.innerHTML) {
-            btn.innerHTML = btn.innerHTML.toLowerCase();
-          } else if (btn.innerHTML.length === 1) {
-            btn.innerHTML = btn.innerHTML.toUpperCase();
-          }
-        });
-      }
-
-      if (e.target.innerHTML === 'Shift') {
-        if (localStorage.getItem('caps') === 'false') {
-          replaceKeyboard(localStorage.getItem('lang') === 'eu' ? shiftEU : shiftRU);
-        } else {
-          replaceKeyboard(localStorage.getItem('lang') === 'eu' ? buttonsEU : buttonsRU);
+    if (e.target.innerHTML === 'CapsLock') {
+      localStorage.setItem('caps', localStorage.getItem('caps') === 'false');
+      Array.from(document.getElementsByClassName('btn')).forEach((button) => {
+        const btn = button;
+        if (btn.innerHTML.length === 1 && btn.innerHTML.toUpperCase() === btn.innerHTML) {
+          btn.innerHTML = btn.innerHTML.toLowerCase();
+        } else if (btn.innerHTML.length === 1) {
+          btn.innerHTML = btn.innerHTML.toUpperCase();
         }
-        localStorage.setItem('caps', localStorage.getItem('caps') === 'false');
-      }
-    });
+      });
+    }
 
-    elem.addEventListener('mouseup', (e) => {
-      const { style } = e.target;
-      style.background = '#fff';
-      style.color = '#000';
-      style.borderRadius = '0px';
-
-      if (e.target.innerHTML === 'Shift') {
-        if (localStorage.getItem('caps') === 'false') {
-          replaceKeyboard(localStorage.getItem('lang') === 'eu' ? shiftEU : shiftRU);
-        } else {
-          replaceKeyboard(localStorage.getItem('lang') === 'eu' ? buttonsEU : buttonsRU);
-        }
-        localStorage.setItem('caps', localStorage.getItem('caps') === 'false');
+    if (e.target.innerHTML === 'Shift') {
+      if (localStorage.getItem('caps') === 'false') {
+        replaceKeyboard(localStorage.getItem('lang') === 'eu' ? shiftEU : shiftRU);
+      } else {
+        replaceKeyboard(localStorage.getItem('lang') === 'eu' ? buttonsEU : buttonsRU);
       }
-    });
+      localStorage.setItem('caps', localStorage.getItem('caps') === 'false');
+    }
+  });
+
+  document.getElementsByClassName('container')[0].addEventListener('mouseup', (e) => {
+    const { style } = e.target;
+    style.background = '#fff';
+    style.color = '#000';
+    style.borderRadius = '0px';
+
+    if (e.target.innerHTML === 'Shift') {
+      if (localStorage.getItem('caps') === 'false') {
+        replaceKeyboard(localStorage.getItem('lang') === 'eu' ? shiftEU : shiftRU);
+      } else {
+        replaceKeyboard(localStorage.getItem('lang') === 'eu' ? buttonsEU : buttonsRU);
+      }
+      localStorage.setItem('caps', localStorage.getItem('caps') === 'false');
+    }
   });
 
   document.addEventListener('keydown', (event) => {
     document.getElementById('input').focus();
     event.preventDefault();
-      Array.from(document.getElementsByClassName('btn')).forEach((elem) => {
-        if (elem.textContent === langSymb(event.key) || elem.textContent === event.code) {
-          let btn = null;
-          if (isSpecial(event.code)) {
-            btn = document.getElementsByClassName(sp[event.code].class)[sp[event.code].numb];
-          } else {
-            btn = elem;
-          }
-          btn.style.background = '#000';
-          btn.style.color = '#fff';
-          btn.style.borderRadius = '10px';
+    Array.from(document.getElementsByClassName('btn')).forEach((elem) => {
+      if (elem.textContent === langSymb(event.key) || elem.textContent === event.code) {
+        let btn = null;
+        if (isSpecial(event.code)) {
+          btn = document.getElementsByClassName(sp[event.code].class)[sp[event.code].numb];
+        } else {
+          btn = elem;
+        }
+        btn.style.background = '#000';
+        btn.style.color = '#fff';
+        btn.style.borderRadius = '10px';
+      }
+    });
+    if (event.ctrlKey && event.altKey) {
+      localStorage.setItem('caps', false);
+      replaceKeyboard(localStorage.getItem('lang') === 'eu' ? buttonsRU : buttonsEU);
+      localStorage.setItem('lang', localStorage.getItem('lang') === 'eu' ? 'ru' : 'eu');
+    }
+
+    if (event.key === 'Backspace') {
+      document.getElementById('input').textContent = document.getElementById('input').textContent.slice(0, document.getElementById('input').textContent.length - 1);
+    }
+
+    if (event.key === 'CapsLock') {
+      localStorage.setItem('caps', localStorage.getItem('caps') === 'false');
+      Array.from(document.getElementsByClassName('btn')).forEach((button) => {
+        const btn = button;
+        if (btn.textContent.length === 1 && btn.textContent.toUpperCase() === btn.textContent) {
+          btn.textContent = btn.textContent.toLowerCase();
+        } else if (btn.textContent.length === 1) {
+          btn.textContent = btn.textContent.toUpperCase();
         }
       });
-      if (event.ctrlKey && event.altKey) {
-        localStorage.setItem('caps', false);
-        replaceKeyboard(localStorage.getItem('lang') === 'eu' ? buttonsRU : buttonsEU);
-        localStorage.setItem('lang', localStorage.getItem('lang') === 'eu' ? 'ru' : 'eu');
-      }
+    }
 
-      if (event.key === 'Backspace') {
-        document.getElementById('input').textContent = document.getElementById('input').textContent.slice(0, document.getElementById('input').textContent.length - 1);
+    if (event.key === 'Shift') {
+      if (localStorage.getItem('caps') === 'false') {
+        replaceKeyboard(localStorage.getItem('lang') === 'eu' ? shiftEU : shiftRU);
+      } else {
+        replaceKeyboard(localStorage.getItem('lang') === 'eu' ? buttonsEU : buttonsRU);
       }
-
-      if (event.key === 'CapsLock') {
-        localStorage.setItem('caps', localStorage.getItem('caps') === 'false');
-        Array.from(document.getElementsByClassName('btn')).forEach((button) => {
-          const btn = button;
-          if (btn.textContent.length === 1 && btn.textContent.toUpperCase() === btn.textContent) {
-            btn.textContent = btn.textContent.toLowerCase();
-          } else if (btn.textContent.length === 1) {
-            btn.textContent = btn.textContent.toUpperCase();
-          }
-        });
-      }
-
-      if (event.key === 'Shift') {
-        if (localStorage.getItem('caps') === 'false') {
-          replaceKeyboard(localStorage.getItem('lang') === 'eu' ? shiftEU : shiftRU);
-        } else {
-          replaceKeyboard(localStorage.getItem('lang') === 'eu' ? buttonsEU : buttonsRU);
-        }
-        localStorage.setItem('caps', localStorage.getItem('caps') === 'false');
-      }
-      document.getElementById('input').innerHTML += isSpecial(event.code) ? sp[event.code].value : langSymb(event.key);
+      localStorage.setItem('caps', localStorage.getItem('caps') === 'false');
+    }
+    document.getElementById('input').innerHTML += isSpecial(event.code) ? sp[event.code].value : langSymb(event.key);
   });
 
   document.addEventListener('keyup', (event) => {
@@ -369,7 +365,18 @@ window.onload = () => {
     localStorage.setItem('caps', false);
   }
 
-  const def = htmlLang === 'eu' ? (localStorage.getItem('caps') === 'false' ? buttonsEU : shiftEU) :  (localStorage.getItem('caps') === 'false' ? buttonsRU : shiftRU);
+  let def = [];
+  if (localStorage.getItem('caps') === 'false') {
+    if (htmlLang === 'eu') {
+      def = buttonsEU;
+    } else {
+      def = shiftEU;
+    }
+  } else if (htmlLang === 'ru') {
+    def = buttonsRU;
+  } else {
+    def = shiftRU;
+  }
 
   const input = document.createElement('textarea');
   input.id = 'input';
