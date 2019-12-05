@@ -225,7 +225,6 @@ function langSymb(symb) {
 
 function clicks() {
   document.getElementsByClassName('container')[0].addEventListener('click', (e) => {
-    console.log(e.target.tagName);
     if (e.target.tagName === 'BUTTON') {
       document.getElementById('input').innerHTML += isSpecial(e.target.innerHTML) ? '' : e.target.innerHTML;
     }
