@@ -225,14 +225,19 @@ function langSymb(symb) {
 
 function clicks() {
   document.getElementsByClassName('container')[0].addEventListener('click', (e) => {
-    document.getElementById('input').innerHTML += isSpecial(e.target.innerHTML) ? '' : e.target.innerHTML;
+    console.log(e.target.tagName);
+    if (e.target.tagName === 'BUTTON') {
+      document.getElementById('input').innerHTML += isSpecial(e.target.innerHTML) ? '' : e.target.innerHTML;
+    }
   });
 
   document.getElementsByClassName('container')[0].addEventListener('mousedown', (e) => {
-    const { style } = e.target;
-    style.background = '#000';
-    style.color = '#fff';
-    style.borderRadius = '10px';
+    if (e.target.tagName === 'BUTTON') {
+      const { style } = e.target;
+      style.background = '#000';
+      style.color = '#fff';
+      style.borderRadius = '10px';
+    }
 
     if (e.target.innerHTML === 'Enter') {
       document.getElementById('input').innerHTML += '\n';
@@ -370,10 +375,10 @@ window.onload = () => {
     if (htmlLang === 'eu') {
       def = buttonsEU;
     } else {
-      def = shiftEU;
+      def = buttonsRU;
     }
-  } else if (htmlLang === 'ru') {
-    def = buttonsRU;
+  } else if (htmlLang === 'eu') {
+    def = shiftEU;
   } else {
     def = shiftRU;
   }
